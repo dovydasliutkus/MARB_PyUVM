@@ -92,12 +92,28 @@ class cl_marb_tb_base_test(uvm_test):
         self.cfg.sdt_cons_cfg.ADDR_WIDTH = self.dut.ADDR_WIDTH.value
 
         # Update DATA and ADDR widths for the vif, TODO: using a private method may be wrong
-        self.cfg.sdt_prod1_cfg.vif._set_width_values(self.cfg.sdt_prod1_cfg.ADDR_WIDTH, self.cfg.sdt_prod1_cfg.DATA_WIDTH)
-        self.cfg.sdt_prod2_cfg.vif._set_width_values(self.cfg.sdt_prod2_cfg.ADDR_WIDTH, self.cfg.sdt_prod2_cfg.DATA_WIDTH)
-        self.cfg.sdt_prod3_cfg.vif._set_width_values(self.cfg.sdt_prod3_cfg.ADDR_WIDTH, self.cfg.sdt_prod3_cfg.DATA_WIDTH)
-        self.cfg.sdt_cons_cfg.vif._set_width_values(self.cfg.sdt_cons_cfg.ADDR_WIDTH, self.cfg.sdt_cons_cfg.DATA_WIDTH)
+        # self.cfg.sdt_prod1_cfg.vif._set_width_values(self.cfg.sdt_prod1_cfg.ADDR_WIDTH, self.cfg.sdt_prod1_cfg.DATA_WIDTH)
+        # self.cfg.sdt_prod2_cfg.vif._set_width_values(self.cfg.sdt_prod2_cfg.ADDR_WIDTH, self.cfg.sdt_prod2_cfg.DATA_WIDTH)
+        # self.cfg.sdt_prod3_cfg.vif._set_width_values(self.cfg.sdt_prod3_cfg.ADDR_WIDTH, self.cfg.sdt_prod3_cfg.DATA_WIDTH)
+        # self.cfg.sdt_cons_cfg.vif._set_width_values(self.cfg.sdt_cons_cfg.ADDR_WIDTH, self.cfg.sdt_cons_cfg.DATA_WIDTH)
+        
+        # Pass the required parameters to the sSDT checker objects
+        # --------------------------------------------------------------------------
 
-        # Assertions checkers
+        # Instance factory overrides to insert the correct DATA_WIDTH
+        uvm_factory().set_inst_override_by_type(cl_sdt_seq_item, sdt_change_width(
+            self.cfg.sdt_prod1_cfg.ADDR_WIDTH,
+            self.cfg.sdt_prod1_cfg.DATA_WIDTH), "*uvc_sdt_producer1*")
+        uvm_factory().set_inst_override_by_type(cl_sdt_seq_item, sdt_change_width(
+            self.cfg.sdt_prod2_cfg.ADDR_WIDTH,
+            self.cfg.sdt_prod2_cfg.DATA_WIDTH), "*uvc_sdt_producer2*")
+        uvm_factory().set_inst_override_by_type(cl_sdt_seq_item, sdt_change_width(
+            self.cfg.sdt_prod3_cfg.ADDR_WIDTH,
+            self.cfg.sdt_prod3_cfg.DATA_WIDTH), "*uvc_sdt_producer3*")
+        uvm_factory().set_inst_override_by_type(cl_sdt_seq_item, sdt_change_width(
+            self.cfg.sdt_cons_cfg.ADDR_WIDTH,
+            self.cfg.sdt_cons_cfg.DATA_WIDTH), "*uvc_sdt_consumer*")
+        # Assertions checkerssdt_change_width(addr_width = 1, data_width = 1):
 
         self.assert_check_apb = if_apb_assert_check(clk_signal  = self.dut.clk,
                                                     rst_signal  = self.dut.rst)

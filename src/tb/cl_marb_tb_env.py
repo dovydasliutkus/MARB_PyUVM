@@ -25,6 +25,11 @@ class cl_marb_tb_env(uvm_env):
 
         self.apb_agent = None
 
+        self.uvc_sdt_producer1 = None
+        self.uvc_sdt_producer2 = None
+        self.uvc_sdt_producer3 = None
+        self.uvc_sdt_consumer = None
+
     def build_phase(self):
         self.logger.info("Start build_phase() -> MARB env")
         super().build_phase()
@@ -44,6 +49,20 @@ class cl_marb_tb_env(uvm_env):
         self.reg_model = cl_reg_block()
         self.adapter   = cl_apb_reg_adapter()
 
+        # Instantiate producer UVCs (clients)
+        ConfigDB().set(self, "uvc_sdt_producer1", "cfg", self.cfg.sdt_prod1_cfg)
+        self.uvc_sdt_producer1 = cl_sdt_agent("uvc_sdt_producer1",self)
+        
+        ConfigDB().set(self, "uvc_sdt_producer2", "cfg", self.cfg.sdt_prod2_cfg)
+        self.uvc_sdt_producer2 = cl_sdt_agent("uvc_sdt_producer2",self)
+        
+        ConfigDB().set(self, "uvc_sdt_producer3", "cfg", self.cfg.sdt_prod3_cfg)
+        self.uvc_sdt_producer3 = cl_sdt_agent("uvc_sdt_producer3",self)
+        
+        # Instantiate consumer UVC (memory)
+        ConfigDB().set(self, "uvc_sdt_consumer", "cfg", self.cfg.sdt_cons_cfg)
+        self.uvc_sdt_consumer = cl_sdt_agent("uvc_sdt_consumer",self)
+
         # Set register model in virtual sequencer
         self.virtual_sequencer.reg_model = self.reg_model
 
@@ -57,5 +76,11 @@ class cl_marb_tb_env(uvm_env):
         # Connect reg_model and APB sequencer
         self.reg_model.bus_map.set_sequencer(self.apb_agent.sequencer)
         self.reg_model.bus_map.set_adapter(self.adapter)
+
+        # Connect virtual sequencer to UVC sequencers
+        self.virtual_sequencer.sdt_producer1_sequencer = self.uvc_sdt_producer1.sequencer
+        self.virtual_sequencer.sdt_producer2_sequencer = self.uvc_sdt_producer2.sequencer
+        self.virtual_sequencer.sdt_producer3_sequencer = self.uvc_sdt_producer3.sequencer
+        self.virtual_sequencer.sdt_consumer_sequencer  = self.uvc_sdt_consumer.sequencer
 
         self.logger.info("End connect_phase() -> MARB env")
