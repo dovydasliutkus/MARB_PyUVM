@@ -1,5 +1,4 @@
 from pyuvm import UVMFatalError
-
 class cl_sdt_interface():
     """Python interface for SDT UVC"""
 
