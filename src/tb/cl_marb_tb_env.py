@@ -49,7 +49,7 @@ class cl_marb_tb_env(uvm_env):
         self.reg_model = cl_reg_block()
         self.adapter   = cl_apb_reg_adapter()
 
-        # Instantiate producer UVCs (clients)
+        # Instantiate producer UVCs (clients) and pass handles to the configuration object
         ConfigDB().set(self, "uvc_sdt_producer1", "cfg", self.cfg.sdt_prod1_cfg)
         self.uvc_sdt_producer1 = cl_sdt_agent("uvc_sdt_producer1",self)
         
